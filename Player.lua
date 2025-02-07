@@ -14,10 +14,39 @@ function Player(debugging)
         thrust={
             x=0,
             y=0,
-            speed=1
+            speed=1,
+            big_flame = false,
+            flame = 0.5--it should be less than 1.5(it is the ratio between flame height and radius--> H : R)
         },
+        drawFlameThrust = function (self, filltype, color)
+            love.graphics.setColor(color)
+            love.graphics.polygon(--(pg-17,MKGVI)
+                filltype,
+                self.x - (self.radius)*(math.cos(self.angle)/2 + self.thrust.flame*math.sin(self.angle)/math.sqrt(3)),
+                self.y + (self.radius)*(math.sin(self.angle)/2 - self.thrust.flame*math.cos(self.angle)/math.sqrt(3)),
+                self.x - (self.radius/2) * ((1+2*self.thrust.flame)*math.cos(self.angle)),
+                self.y + (self.radius/2) * ((1+2*self.thrust.flame)*math.sin(self.angle)),
+                self.x - (self.radius)*(math.cos(self.angle)/2 - self.thrust.flame*math.sin(self.angle)/math.sqrt(3)),
+                self.y + (self.radius)*(math.sin(self.angle)/2 + self.thrust.flame*math.cos(self.angle)/math.sqrt(3))
+            )
+        end,
         draw = function (self)
             local opacity = 1--to determine the visibility of the player.
+            if self.thrusting then
+                if not self.thrust.big_flame then
+                    self.thrust.flame = self.thrust.flame + 0.2 / love.timer.getFPS()
+                    if self.thrust.flame > 0.9 then
+                        self.thrust.big_flame = true
+                    end
+                else
+                    self.thrust.flame = self.thrust.flame - 0.2 / love.timer.getFPS()
+                    if self.thrust.flame < 0.4 then
+                        self.thrust.big_flame = false
+                    end
+                end
+                self:drawFlameThrust("fill",{ 255/255 , 182/255 , 25/255 })
+                self:drawFlameThrust("line",{ 1 , 0.16 , 0 })
+            end
             if debugging then
                 love.graphics.setColor(1,0,0)
                 love.graphics.rectangle("fill",self.x-2,self.y-2,4,4)
@@ -48,7 +77,7 @@ function Player(debugging)
             --to move the player (gain thrust)
             if self.thrusting then
                 self.thrust.x = self.thrust.x + self.thrust.speed * math.cos(self.angle) / FPS
-                self.thrust.y = self.thrust.y + self.thrust.speed * math.sin(self.angle) / FPS
+                self.thrust.y = self.thrust.y - self.thrust.speed * math.sin(self.angle) / FPS
             else
                 --to implement friction
                 if self.thrust.x ~= 0 or self.thrust.y ~= 0 then
@@ -59,7 +88,18 @@ function Player(debugging)
             --to move the player (using gained thrust)
             self.x = self.x + self.thrust.x
             self.y = self.y + self.thrust.y
+
+            if self.x + self.radius < 0 then
+                self.x = love.graphics.getWidth() + self.radius
+            elseif self.x - self.radius > love.graphics.getWidth() then
+                self.x = - self.radius
+            end
+            if self.y + self.radius < 0 then
+                self.y = love.graphics.getHeight() + self.radius
+            elseif self.y - self.radius > love.graphics.getHeight() then
+                self.y = - self.radius
+            end
         end
     }
-end
+end 
 return Player

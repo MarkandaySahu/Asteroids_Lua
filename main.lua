@@ -29,5 +29,11 @@ end
 function love.draw()
     player:draw()
     love.graphics.setColor(1,1,1,1)
-    love.graphics.print(love.timer.getFPS(),10,10)
+    love.graphics.printf(
+        "FPS: "..love.timer.getFPS(),
+        love.graphics.newFont(16),--font-size
+        10,--the x position on screen
+        love.graphics.getHeight()-30,--the y position on screen
+        love.graphics.getWidth()--Wrap the line after this many horizontal pixels.
+        )--this will get you the FPS counter
 end
