@@ -22,10 +22,10 @@ function Game()
 
             _G.asteroids = {}--inserting no. of asteroids to the Game.
             
-            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level,true))
-            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level,true))
-            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level,true))
-            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level,true))
+            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level))
+            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level))
+            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level))
+            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level))
 
         end,
         draw = function (self, faded)

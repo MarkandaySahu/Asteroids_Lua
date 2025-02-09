@@ -1,5 +1,6 @@
+require"../globals"
 local love = require "love"
-function Asteroids(x,y,ast_size,level,debugging)
+function Asteroids(x,y,ast_size,level)
     debugging = debugging or false
     local ASTEROID_VERTICES = 6--the higher this value is the more spikey the asteorid is.
     local ASTEROID_JAGGED = 0.4--the lower this value is the more round the polygon will be.
@@ -40,7 +41,7 @@ function Asteroids(x,y,ast_size,level,debugging)
                 table.insert(points,self.y + self.radius * self.offset[i] * math.sin(self.angle + i * math.pi * 2 / self.vert))
             end
             love.graphics.polygon("line",points)
-            if debugging then
+            if show_debugging then
                 love.graphics.setColor(1,0,0)
                 love.graphics.circle("line",self.x,self.y,self.radius)
             end
@@ -61,6 +62,15 @@ function Asteroids(x,y,ast_size,level,debugging)
             elseif self.y - self.radius > love.graphics.getHeight() then
                 self.y = - self.radius
             end
+        end,
+
+        destroy = function (self, asteroids_tbl, index, game)
+            local MIN_ASTEROID_SIZE = math.ceil(ASTEROID_SIZE / 8)
+            if self.radius > MIN_ASTEROID_SIZE then
+                table.insert(asteroids_tbl,Asteroids(self.x,self.y,self.radius,game.level))
+                table.insert(asteroids_tbl,Asteroids(self.x,self.y,self.radius,game.level))
+            end
+            table.remove(asteroids_tbl,index)
         end
     }
 end
