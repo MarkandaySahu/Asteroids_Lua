@@ -53,11 +53,23 @@ function love.update(dt)
     if game.state.running then
         player:movePlayer()
         for ast_index, asteroid in pairs(asteroids) do--asteroids table is defined in Game.lua
+            if not player.exploding then
+                if math.sqrt((player.x - asteroid.x)^2 + (player.y - asteroid.y)^2) < asteroid.radius then
+                    player:explode()
+                    destroy_ast = true
+                end
+            else
+                player.explode_time = player.explode_time - 1
+            end
             for _, laser in pairs(player.lasers) do
                 if math.sqrt((laser.x - asteroid.x)^2 + (laser.y - asteroid.y)^2) < asteroid.radius then
                     laser:explode()
                     asteroid:destroy(asteroids,ast_index,game)
                 end
+            end
+            if destroy_ast then
+                destroy_ast = false
+                asteroid:destroy(asteroids,ast_index,game)
             end
             asteroid:move(dt)
         end
