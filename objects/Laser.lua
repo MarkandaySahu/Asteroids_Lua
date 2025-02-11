@@ -17,7 +17,7 @@ function Laser(x,y,angle)
         explod_time = 0,
         
         explode = function (self)
-            self.explod_time = math.ceil(EXPLODE_DURATION * (love.timer.getFPS()/100))
+            self.explod_time = math.ceil(EXPLODE_DURATION * (love.timer.getFPS()/10))
             if self.explod_time > EXPLODE_DURATION then
                 self.exploding = explodingEnum["done_exploding"]
             end

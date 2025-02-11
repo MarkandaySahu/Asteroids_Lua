@@ -2,10 +2,10 @@ require"../globals"
 local love = require"love"
 local Laser = require"objects/Laser"
 
-function Player(show_debugging)
+function Player(num_lives,sfx)
     local SHIP_SIZE = 30
     local VIEW_ANGLE = math.rad(90)
-    local EXPLODE_DURATION = 3
+    local EXPLODE_DURATION = 2
     return{
         --player will be positioned at the center when game starts.
         x = love.graphics.getWidth()/2,
@@ -15,6 +15,7 @@ function Player(show_debugging)
         rotation = 0,
         explode_time = 0,
         exploding = false,
+        lives = num_lives or 3,
         lasers={},--table containing points for laser.
         thrusting = false,--to move the player.
         thrust={
@@ -36,11 +37,44 @@ function Player(show_debugging)
                 self.y + (self.radius)*(math.sin(self.angle)/2 + self.thrust.flame*math.cos(self.angle)/math.sqrt(3))
             )
         end,
+        drawLives = function (self, faded)
+            local opacity = 1--to determine the visibility of the player.
+            
+            if faded then
+                opacity = 0.4
+            end
+
+            if self.lives == 2 then
+                love.graphics.setColor(1,1,0.5,opacity)
+            elseif self.lives == 1 then
+                love.graphics.setColor(1,0.2,0.2,opacity)
+            else
+                love.graphics.setColor(1,1,1,opacity)
+            end
+            local x_pos, y_pos = 45,60 --setting the position of health bar counter.
+            for i = 1, self.lives do
+                if self.exploding then
+                    if i == self.lives then
+                        love.graphics.setColor(1,0,0,opacity)--the health bar will be set to red during explosion time.
+                    end
+                end
+                love.graphics.polygon(--(pg-17,MKGVI)
+                "line",
+                (i * x_pos) + (self.radius)*math.cos(VIEW_ANGLE),--cos() takes angle parameters in radians(pg-17,MKGVI).
+                ( y_pos) - (self.radius)*math.sin(VIEW_ANGLE),
+                (i * x_pos) - (self.radius/2) * (math.cos(VIEW_ANGLE) + (math.sqrt(3))*math.sin(VIEW_ANGLE)),
+                ( y_pos) + (self.radius/2) * (math.sin(VIEW_ANGLE) - (math.sqrt(3))*math.cos(VIEW_ANGLE)),
+                (i * x_pos) - (self.radius/2) * (math.cos(VIEW_ANGLE) - (math.sqrt(3))*math.sin(VIEW_ANGLE)),
+                ( y_pos) + (self.radius/2) * (math.sin(VIEW_ANGLE) + (math.sqrt(3))*math.cos(VIEW_ANGLE))
+            )
+            end
+        end,
         shootLaser = function (self)
             if #self.lasers > 3 then
                 table.remove(self.lasers,1)
             end
             table.insert(self.lasers,Laser(self.x,self.y,self.angle))
+            sfx:playFX("laser")
         end,
         draw = function (self,faded)
             local opacity = 1--to determine the visibility of the player.
@@ -111,7 +145,9 @@ function Player(show_debugging)
                 if self.thrusting then
                     self.thrust.x = self.thrust.x + self.thrust.speed * math.cos(self.angle) / FPS
                     self.thrust.y = self.thrust.y - self.thrust.speed * math.sin(self.angle) / FPS
+                    sfx:playFX("thruster","slow")
                 else
+                    sfx:stopFX("thruster")
                     --to implement friction
                     if self.thrust.x ~= 0 or self.thrust.y ~= 0 then
                         self.thrust.x = self.thrust.x - friction * self.thrust.x / FPS

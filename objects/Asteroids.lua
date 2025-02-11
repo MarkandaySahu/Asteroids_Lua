@@ -1,13 +1,12 @@
 require"../globals"
 local love = require "love"
-function Asteroids(x,y,ast_size,level)
+local Player = require"objects.Player"
+function Asteroids(x,y,ast_size,level,sfx)
     debugging = debugging or false
     local ASTEROID_VERTICES = 6--the higher this value is the more spikey the asteorid is.
     local ASTEROID_JAGGED = 0.4--the lower this value is the more round the polygon will be.
-    local ASTEROID_SPEED = math.random(50) + (level * 2)
-
+    local ASTEROID_SPEED = math.random(50) + (level * 3)
     local vert = math.floor(math.random(ASTEROID_VERTICES+1)*ASTEROID_VERTICES/2)--to produce random no. of vertices
-    
     local offset = {}
     for i = 1,vert+1 do
         table.insert(offset,math.random() * ASTEROID_JAGGED * 2 + 1 - ASTEROID_JAGGED)
@@ -40,7 +39,8 @@ function Asteroids(x,y,ast_size,level)
                 table.insert(points,self.x + self.radius * self.offset[i] * math.cos(self.angle + i * math.pi * 2 / self.vert))
                 table.insert(points,self.y + self.radius * self.offset[i] * math.sin(self.angle + i * math.pi * 2 / self.vert))
             end
-            love.graphics.polygon("line",points)
+            love.graphics.setColor(0.6,0.6,0.6)
+            love.graphics.polygon("fill",points)
             if show_debugging then
                 love.graphics.setColor(1,0,0)
                 love.graphics.circle("line",self.x,self.y,self.radius)
@@ -65,11 +65,13 @@ function Asteroids(x,y,ast_size,level)
         end,
 
         destroy = function (self, asteroids_tbl, index, game)
+            score = score + 10
             local MIN_ASTEROID_SIZE = math.ceil(ASTEROID_SIZE / 8)
             if self.radius > MIN_ASTEROID_SIZE then
-                table.insert(asteroids_tbl,Asteroids(self.x,self.y,self.radius,game.level))
-                table.insert(asteroids_tbl,Asteroids(self.x,self.y,self.radius,game.level))
+                table.insert(asteroids_tbl,Asteroids(self.x,self.y,self.radius,game.level,sfx))
+                table.insert(asteroids_tbl,Asteroids(self.x,self.y,self.radius,game.level,sfx))
             end
+            sfx:playFX("asteroid_explosion")
             table.remove(asteroids_tbl,index)
         end
     }

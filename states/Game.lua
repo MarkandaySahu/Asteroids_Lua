@@ -1,14 +1,16 @@
 --it'll contain our game state.
+require"../globals"
 local love =  require"love"
 local Text = require"../components/Text"
 local Asteroids = require"../objects/Asteroids"
-function Game()
+function Game(sfx)
     return{
         level = 1,
+        seconds = 0,
         state={
-            menu = false,
+            menu = true,
             paused = false,
-            running = true,
+            running = false,
             ended = false
         },
         changeGameState = function (self,state)
@@ -18,20 +20,20 @@ function Game()
             self.state.ended = state == "ended"
         end,
         startNewGame = function (self, player)
-            self:changeGameState("running")
-
-            _G.asteroids = {}--inserting no. of asteroids to the Game.
+            if player.lives <= 0 then
+                self:changeGameState("ended")
+            else
+                self:changeGameState("running")
+            end
             
-            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level))
-            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level))
-            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level))
-            table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),100,self.level))
-
+            for i = 1, self.level do
+                table.insert(asteroids,Asteroids(math.floor(math.random(love.graphics.getWidth())),math.floor(math.random(love.graphics.getHeight())),ASTEROID_SIZE,self.level,sfx))
+            end
         end,
         draw = function (self, faded)
             if faded then
                 Text(
-                    "PAUSED :O",
+                    "-PAUSED-",
                     0,
                     love.graphics.getHeight() * 0.4,
                     "h1",
@@ -41,6 +43,16 @@ function Game()
                     "center"
                 ):draw()
             end
+            Text(
+            "Level "..self.level,
+            0,
+            love.graphics.getHeight() * 0.08,
+            "h1",
+            true,
+            true,
+            love.graphics.getWidth(),
+            "center"
+            ):draw()
         end
     }
 end
