@@ -1,4 +1,5 @@
 require"globals"
+require 'components.simple-slider'
 local love = require"love"
 local Player = require"objects/Player"
 local Game = require"states/Game"
@@ -17,6 +18,9 @@ function love.load()
     player = Player(3,sfx)
     game = Game(sfx)
     menu = Menu(game,player,sfx)
+    volumeSlider = newSlider(400, 300, 300, 0.1, 0, 1, nil)
+    speedSlider = newSlider(400, 350, 300, 0.1, 0, 1, nil)
+
 end
 -------------------------------------------------------------------------
 --keypressed Event
@@ -34,6 +38,10 @@ function love.keypressed(key)
     elseif game.state.paused then
         if key == "escape" then
             game:changeGameState("running")
+        end
+    elseif game.state.settings then
+        if key == "escape" then
+            game:changeGameState("menu")
         end
     end
 end
@@ -115,8 +123,12 @@ function love.update(dt)
     elseif game.state.menu then
         menu:run(clickedMouse,sfx)
         clickedMouse = false
+    elseif game.state.settings then
+        volumeSlider:update()
+        sfx:setBGvol(volumeSlider:getValue())
+        speedSlider:update()
+        ast_sp = speedSlider:getValue()*10
     end
-    
 end
 -------------------------------------------------------------------------
 function love.draw()
@@ -152,6 +164,34 @@ function love.draw()
         )
     elseif game.state.menu then
         menu:draw()
+    elseif game.state.settings then
+        love.graphics.setLineWidth(4)
+        love.graphics.printf(
+        "SETTINGS",
+        love.graphics.newFont(40),
+        140,
+        200,
+        love.graphics.getWidth()
+        )
+        love.graphics.setColor(254/255, 67/255, 101/255)
+        love.graphics.printf(
+        "VOLUME: ",
+        love.graphics.newFont(20),
+        120,
+        290,
+        love.graphics.getWidth()
+        )
+        volumeSlider:draw()
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf(
+        "SPEED: ",
+        love.graphics.newFont(20),
+        120,
+        340,
+        love.graphics.getWidth()
+        )
+        speedSlider:draw()
+        love.graphics.setLineWidth(1)
     elseif game.state.ended then
         love.graphics.printf(
         "Game Over",

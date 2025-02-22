@@ -114,6 +114,7 @@ function Player(num_lives,sfx)
                 love.graphics.circle("line",self.x,self.y,self.radius)
             end
             love.graphics.setColor(1,1,1,opacity)
+            love.graphics.rectangle("fill",self.x + (self.radius)*math.cos(self.angle)-2,self.y - (self.radius)*math.sin(self.angle)-2,4,4)
             love.graphics.polygon(--(pg-17,MKGVI)
                 "line",
                 self.x + (self.radius)*math.cos(self.angle),--cos() takes angle parameters in radians(pg-17,MKGVI).

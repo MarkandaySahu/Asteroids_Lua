@@ -3,4 +3,5 @@ _G.show_debugging = false
 _G.destroy_ast = false
 _G.cursor_radius = 5
 _G.score = 0
+_G.ast_sp = 1
 _G.asteroids = {}--inserting no. of asteroids to the Game.

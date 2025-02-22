@@ -20,6 +20,9 @@ function SFX()
                 bgm:play()
             end
         end,
+        setBGvol = function (self,v)
+            bgm:setVolume(v)
+        end,
         stopFX = function (self,effect)
             if effects[effect]:isPlaying() then
                 effects[effect]:stop()

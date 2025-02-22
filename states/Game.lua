@@ -3,6 +3,7 @@ require"../globals"
 local love =  require"love"
 local Text = require"../components/Text"
 local Asteroids = require"../objects/Asteroids"
+local Button = require"components.Button"
 function Game(sfx)
     return{
         level = 1,
@@ -11,13 +12,15 @@ function Game(sfx)
             menu = true,
             paused = false,
             running = false,
-            ended = false
+            ended = false,
+            settings = false
         },
         changeGameState = function (self,state)
             self.state.menu = state == "menu"
             self.state.paused = state == "paused"
             self.state.running = state == "running"
             self.state.ended = state == "ended"
+            self.state.settings = state == "settings"
         end,
         startNewGame = function (self, player)
             if player.lives <= 0 then

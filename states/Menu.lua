@@ -6,13 +6,16 @@ function Menu(game,player,sfx)
         newGame = function ()
             game:startNewGame(player)
         end,
+        setting = function ()
+            game:changeGameState("settings")
+        end,
         quitGame = function ()
             love.event.quit()
         end
     }
     local buttons = {
         Button(funcs.newGame,nil,{r=110/255,g=152/255,b=111/255},love.graphics.getWidth()/3, 50 , "New Game","center","h3",love.graphics.getWidth()/3,love.graphics.getHeight() * 0.25 ),
-        Button(nil,nil,{r=110/255,g=152/255,b=111/255},love.graphics.getWidth()/3, 50 , "Settings","center","h3",love.graphics.getWidth()/3,love.graphics.getHeight() * 0.32 ),
+        Button(funcs.setting,nil,{r=110/255,g=152/255,b=111/255},love.graphics.getWidth()/3, 50 , "Settings","center","h3",love.graphics.getWidth()/3,love.graphics.getHeight() * 0.32 ),
         Button(funcs.quitGame,nil,{r=110/255,g=152/255,b=111/255},love.graphics.getWidth()/3, 50 , "Quit Game","center","h3",love.graphics.getWidth()/3,love.graphics.getHeight() * 0.39 )
     }
     return{

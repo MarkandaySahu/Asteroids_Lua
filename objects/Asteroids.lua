@@ -5,7 +5,7 @@ function Asteroids(x,y,ast_size,level,sfx)
     debugging = debugging or false
     local ASTEROID_VERTICES = 6--the higher this value is the more spikey the asteorid is.
     local ASTEROID_JAGGED = 0.4--the lower this value is the more round the polygon will be.
-    local ASTEROID_SPEED = math.random(50) + (level * 3)
+    local ASTEROID_SPEED = (math.random(50) + (level * 3)) * ast_sp
     local vert = math.floor(math.random(ASTEROID_VERTICES+1)*ASTEROID_VERTICES/2)--to produce random no. of vertices
     local offset = {}
     for i = 1,vert+1 do
@@ -24,7 +24,7 @@ function Asteroids(x,y,ast_size,level,sfx)
         angle = math.rad(math.random(math.pi)),
         vert = vert,
         offset = offset,
-
+        
         draw = function (self,faded)
             local opacity = 1
 
